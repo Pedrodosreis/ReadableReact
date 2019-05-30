@@ -1,13 +1,20 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { getAllCategories } from '../actions/categories';
-import { getAllPosts } from '../actions/posts';
+import { getAllPosts, sortByVote } from '../actions/posts';
 import { Menu, Icon } from 'antd';
 import 'antd/dist/antd.css';
+import { Link } from 'react-router-dom';
+import Coment from './Coment.js';
+
 
 const { SubMenu }  = Menu;
 
 class Header extends Component {
+
+	state =  {
+		sort: false
+	}
 
 	componentDidMount() {
 		this.props.dispatch(getAllCategories());
@@ -21,6 +28,14 @@ class Header extends Component {
 		this.props.dispatch(getAllPosts(e.key));
 	};
 
+	sortByVote = () => {
+		this.props.dispatch(sortByVote(this.props.category, this.state.sort));
+
+		this.setState(prevState => ({
+		  sort: !this.state.sort
+		}));
+	}
+
 	isArray =  (value) => {
 		return value && typeof value === 'object' && value.constructor === Array;
 	}
@@ -30,15 +45,20 @@ class Header extends Component {
 		let categories = [];
 		if(this.isArray(this.props.categories)) {
 			categories = this.props.categories.map(category => {
-				return <Menu.Item key={category.name} onClick={this.categoryClick}>{category.name}</Menu.Item>
+				return <Menu.Item key={category.name} onClick={this.categoryClick}>{category.name}
+				  <Link to={`/${category.name}`}>
+	                {category.name}
+	              </Link>
+				</Menu.Item>
 			})
 		}
 		return (
 
-		<div>
+		<div>		
 		<Menu mode="horizontal">
-		<Menu.Item key="title" onClick={this.handleClick} >
+		<Menu.Item key="title" onClick={this.handleClick}>
 		Readable
+		<Link to={`/`}> </Link>
 		</Menu.Item>
 
 		<SubMenu
@@ -51,6 +71,8 @@ class Header extends Component {
 		</SubMenu>
 
 		</Menu>
+
+		<Coment category={this.props.match.params.category} sort={this.sort} updateSort={this.sortByVote}/>
 		</div>
 		);
 	}
@@ -61,9 +83,5 @@ function mapStateToProps ({ categories }) {
 		categories: categories
 	}
 }
-
-const mapDispatchToProps = dispatch => ({
-	getAllCategories: () => dispatch(getAllCategories()),
-})
 
 export default connect(mapStateToProps)(Header);

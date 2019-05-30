@@ -50,12 +50,22 @@ export const addPost = post => {
     .then(data => data)
 }
 
-export const votePost = (id, vote) =>
+export const votePost = (id) =>
   fetch(`${api}/posts/${id}`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
-      option: vote
+      option: 'upVote'
+    })
+  }).then(res => res.json())
+    .then(data => data)
+
+export const unvotePost = (id) =>
+  fetch(`${api}/posts/${id}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      option: 'downVote'
     })
   }).then(res => res.json())
     .then(data => data)

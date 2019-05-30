@@ -1,25 +1,20 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
-import { voteScore } from '../actions/posts';
-
-
-
+import { voteScore, unvoteScore } from '../actions/posts';
 import { Comment, Icon, Tooltip, Avatar } from 'antd';
+
+
 import moment from 'moment';
 
 class Item extends Component {
 
-	state = {
-		likes: this.props.post.voteScore + 1,
-		action: null,
+	like = () => {
+		this.props.dispatch(voteScore(this.props.post.id, this.props.category, this.props.sort));
 	};
 
-	like = () => {
-		// this.props.dispatch(voteScore(this.props.post.id, this.props.post.voteScore + 1));
-		this.setState({
-			likes: this.props.post.voteScore + 1,
-		});
+	dislike = () => {
+		this.props.dispatch(unvoteScore(this.props.post.id, this.props.category, this.props.sort));
 	};
 
 	addReply = () => {
@@ -29,20 +24,27 @@ class Item extends Component {
 
 	render() {
 
-		const { likes, action } = this.state;	
-
 		const actions = [
-		<span>
-		<Tooltip title="Like">
-		<Icon
-		type="like"
-		theme={action === 'liked' ? 'filled' : 'outlined'}
-		onClick={this.like}
-		/>
-		</Tooltip>
-		<span style={{ paddingLeft: 8, cursor: 'auto' }}>{likes}</span>
-		</span>,				
-		<span onClick={this.addReply()}>Reply to</span>,
+			<span>
+			<Tooltip title="Like">
+			<span style={{ paddingRight: 8, cursor: 'auto' }}>{this.props.post.voteScore}</span>
+			<Icon
+			type="like"
+			onClick={this.like}
+			/>
+			</Tooltip>
+			
+			</span>,	
+			<span>
+	        <Tooltip title="Dislike">
+	          <Icon
+	            type="dislike"
+	            onClick={this.dislike}
+	          />
+	        </Tooltip>
+	      </span>,			
+			<span onClick={this.addReply()}>Reply to</span>,
+			<span >{this.props.post.commentCount + ' Comentario(s)'} </span>,
 		];
 
 
@@ -54,11 +56,8 @@ class Item extends Component {
 		author={this.props.post.author}
 		content={
 			<div>
-			<h4>{this.props.post.title}</h4>
 			<h5>Category - {this.props.post.category}</h5>
-			<p>
-			{this.props.post.body}
-			</p>
+			<h4>{this.props.post.title}</h4>			
 			</div>
 		}
 		datetime={
@@ -70,10 +69,4 @@ class Item extends Component {
 	}
 }
 
-function mapStateToProps ({ post }) {
-	return {
-		post: post
-	}
-}
-
-export default connect(mapStateToProps)(Item);
+export default connect()(Item);
