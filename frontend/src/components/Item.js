@@ -2,19 +2,21 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
 import { voteScore, unvoteScore } from '../actions/posts';
-import { Comment, Icon, Tooltip, Avatar } from 'antd';
-
-
-import moment from 'moment';
+import { Comment, Icon, Tooltip } from 'antd';
+import { Link } from 'react-router-dom';
 
 class Item extends Component {
 
 	like = () => {
-		this.props.dispatch(voteScore(this.props.post.id, this.props.category, this.props.sort));
+		let sort =  this.props.sort === 'Not sort' ? false : true;
+
+		this.props.dispatch(voteScore(this.props.post.id, this.props.category, sort));
 	};
 
 	dislike = () => {
-		this.props.dispatch(unvoteScore(this.props.post.id, this.props.category, this.props.sort));
+		let sort =  this.props.sort === 'Not sort' ? false : true;
+
+		this.props.dispatch(unvoteScore(this.props.post.id, this.props.category, sort));
 	};
 
 	addReply = () => {
@@ -42,11 +44,10 @@ class Item extends Component {
 	            onClick={this.dislike}
 	          />
 	        </Tooltip>
-	      </span>,			
-			<span onClick={this.addReply()}>Reply to</span>,
-			<span >{this.props.post.commentCount + ' Comentario(s)'} </span>,
-		];
+	      </span>,
 
+			<span >{this.props.post.commentCount + ' Comentario(s)'} </span>,			
+		];
 
 		return (
 
@@ -55,10 +56,12 @@ class Item extends Component {
 		actions={actions}
 		author={this.props.post.author}
 		content={
+			<Link to={`/${this.props.post.category}/${this.props.post.id}`}>
 			<div>
 			<h5>Category - {this.props.post.category}</h5>
 			<h4>{this.props.post.title}</h4>			
 			</div>
+			</Link>
 		}
 		datetime={
 			<span>{(new Date(this.props.post.timestamp)).toDateString()}</span>

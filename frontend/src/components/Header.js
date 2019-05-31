@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { getAllCategories } from '../actions/categories';
-import { getAllPosts, sortByVote } from '../actions/posts';
+import { getAllPosts } from '../actions/posts';
 import { Menu, Icon } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from 'react-router-dom';
-import Coment from './Coment.js';
-
 
 const { SubMenu }  = Menu;
 
 class Header extends Component {
 
-	state =  {
-		sort: false
+	state = {
+		sort: 'Not sort'
 	}
 
 	componentDidMount() {
@@ -28,17 +26,9 @@ class Header extends Component {
 		this.props.dispatch(getAllPosts(e.key));
 	};
 
-	sortByVote = () => {
-		this.props.dispatch(sortByVote(this.props.category, this.state.sort));
-
-		this.setState(prevState => ({
-		  sort: !this.state.sort
-		}));
-	}
-
 	isArray =  (value) => {
 		return value && typeof value === 'object' && value.constructor === Array;
-	}
+	}	
 
 	render() {
 
@@ -56,23 +46,28 @@ class Header extends Component {
 
 		<div>		
 		<Menu mode="horizontal">
+
 		<Menu.Item key="title" onClick={this.handleClick}>
 		Readable
 		<Link to={`/`}> </Link>
 		</Menu.Item>
 
 		<SubMenu
-		title={
-			<span className="submenu-title-wrapper">
-			<Icon type="setting" />Categorias
-			</span>
-		}>
-		{categories}						
+			title={
+				<span className="submenu-title-wrapper">
+				<Icon type="setting" />Categorias
+				</span>
+			}>
+			{categories}						
 		</SubMenu>
+
+		<Menu.Item key="New Post" onClick={this.handleClick}>
+		New Post
+		<Link to={`/new`}> </Link>
+		</Menu.Item>
 
 		</Menu>
 
-		<Coment category={this.props.match.params.category} sort={this.sort} updateSort={this.sortByVote}/>
 		</div>
 		);
 	}

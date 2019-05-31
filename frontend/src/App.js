@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import { getCategories, getPosts, getPost, addPost } from './utils/API.js';
-import Header from './components/Header.js';
-import Coment from './components/Coment.js';
-import NewPost from './components/NewPost.js';
-import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
+import NewPost from './container/NewPost.js';
+import MainPage from './container/MainPage.js';
+import PostPage from './container/PostPage.js';
+import { Switch, Route, withRouter } from 'react-router-dom';
+import CommentForm from './container/CommentForm'
 
 class App extends Component {
 
@@ -16,10 +16,12 @@ class App extends Component {
     return (
       <div >
           <Switch>
-            <Route path='/' exact component={Header} />
+            <Route path='/' exact component={MainPage} />
             <Route path='/new' exact component={NewPost} />
-            <Route path='/:category' exact component={Header} />
-            
+            <Route path='/new/:id' exact component={NewPost} />
+            <Route path='/:category' exact component={MainPage} />
+            <Route path='/:category/:id' exact component={PostPage} />
+            <Route path='/new/comment/:id' exact component={CommentForm} />            
           </Switch>
       </div>
     );

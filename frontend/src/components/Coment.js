@@ -1,30 +1,35 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
-import { getAllPosts, sortByVote } from '../actions/posts';
+import { getAllPosts } from '../actions/posts';
 import Item from './Item.js';
-import { Comment, Icon, Tooltip, Avatar } from 'antd';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { NavLink } from 'react-router-dom'
+import { Menu, Icon } from 'antd';
 
-class Coment extends Component {	
+const { SubMenu }  = Menu;
+
+class Coment extends Component {
+
+	state = {
+		sort: 'Not sort'
+	}
 
 	componentDidMount() {
-		this.props.sort ? this.props.dispatch(sortByVote(this.props.category)) : this.props.dispatch(getAllPosts(this.props.category));		
+		this.props.dispatch(getAllPosts(this.props.category, false));		
 	}
 
 	isArray =  (value) => {
 		return value && typeof value === 'object' && value.constructor === Array;
 	}
 
-	sortByVote = () => {
-		this.props.dispatch(sortByVote(this.props.category));
+	sortChange = (e) => {
 
-		this.setState(prevState => ({
-		  sort: !this.props.sort
-		}));
-		console.log(this.props.sort)
+	    const sort = e.key
+	    this.setState(() => ({
+	      sort
+	    }))
+
+		const isSort =  sort === 'Not sort' ? false : true;
+	    this.props.dispatch(getAllPosts(this.props.category, isSort));	
 	}
 
 	render() {
@@ -32,16 +37,21 @@ class Coment extends Component {
 		let posts = [];
 		if(this.isArray(this.props.posts)) {
 			posts = this.props.posts.map((post, key) => {
-				return <Item key={key} post={post} category={this.props.category} sort={this.props.sort}/>
+				return <Item key={key} post={post} category={this.props.category} sort={this.state.sort}/>
 			})
 		}
 
 		return (
 
 		<div>
-			<br /> <br />
-			<button style={{ marginLeft: 8}} onClick={this.props.updateSort}>Ordenar por votos</button>			
-			<NavLink to="/new"> <button style={{ marginLeft: 8}} >Novo Post </button> </NavLink>
+			<Menu mode="horizontal" style={{ width: 150, display: 'inline-block'}}>
+				<SubMenu title={ <span className="submenu-title-wrapper">
+					<Icon type="appstore" />{this.state.sort}</span> }>
+					<Menu.Item key='Not sort' onClick={this.sortChange}>Not sort</Menu.Item>
+					<Menu.Item key='Sort by likes' onClick={this.sortChange}>Sort by likes</Menu.Item>
+				</SubMenu>
+			</Menu>
+
 			{posts}
 		</div>
 		);

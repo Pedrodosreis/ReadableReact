@@ -1,9 +1,11 @@
-import { getPosts, votePost, getPost, unvotePost, addPost } from '../utils/API.js';
+import { getPosts, votePost, getPost, unvotePost, addPost, removePost, updatePost } from '../utils/API.js';
 
 export const REQUEST_POST = 'REQUEST_POST';
 export const RECEIVE_POSTS = 'RECEIVE_POSTS';
 export const RECEIVE_POST = 'RECEIVE_POST';
 export const ADD_POST = 'ADD_POST';
+export const EDIT_POST = 'EDIT_POST';
+export const REMOVE_POST = 'REMOVE_POST';
 
 export const requestPosts = () => {
   return {
@@ -25,19 +27,28 @@ export const receivePost = (post) => {
   }
 }
 
-export const getAllPosts = (category) => {
+export const getAllPosts = (category, sort = false) => {
   return dispatch => {
     dispatch(requestPosts());
     return getPosts(category)
-      .then(posts => dispatch(receivePosts(posts)))
+      .then(posts => {
+        if(sort) {
+           posts = posts.sort(function (a,b) {
+           return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
+          })
+        }
+        dispatch(receivePosts(posts))
+      })
   }
 }
 
-export const editPost = (post) => {
+export const getPostById = (id) => {
   return dispatch => {
-    return editPost(post)
-      .then(post => getPosts()
-        .then(posts => dispatch(receivePosts(posts))))
+    return getPost(id)
+      .then(post => dispatch({
+        type: RECEIVE_POST,
+        post
+      }))
   }
 }
 
@@ -47,9 +58,11 @@ export const voteScore = (id, category, sort) => {
     return votePost(id)
       .then(post => getPosts(category)
         .then(posts => {
+          if(sort) {
           posts = posts.sort(function (a,b) {
            return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
           })
+          }
 
           dispatch(receivePosts(posts))
         }))
@@ -62,9 +75,11 @@ export const unvoteScore = (id, category, sort) => {
     return unvotePost(id)
       .then(post => getPosts(category)
         .then(posts => {
+          if(sort) {
           posts = posts.sort(function (a,b) {
            return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
           })
+          }
 
           dispatch(receivePosts(posts))
         }))
@@ -96,5 +111,32 @@ export const sendPost = (data) => async (dispatch) => {
   }
   catch(err) {
     console.error("Error adding new post", err)
+  }
+}
+
+export const deletePost = (id) => async (dispatch) => {
+  try {
+    await removePost(id)
+    dispatch({
+      type: REMOVE_POST,
+      id
+    });
+  }
+  catch(err) {
+    console.error("Error removing post", err)
+  }
+}
+
+export const editPost = (data) => async (dispatch) => {
+  console.log(data)
+  try {
+    await updatePost(data)
+    dispatch({
+      type: EDIT_POST,
+      post: data
+    });
+  }
+  catch(err) {
+    console.error("Error editing post", err)
   }
 }

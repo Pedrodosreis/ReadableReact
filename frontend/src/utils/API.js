@@ -30,12 +30,6 @@ export const getPost = (id) => {
 	.then(data => data)
 }
 
-
-
-
-
-
-
 export const addPost = post => {
   const data = {
     ...post,
@@ -71,6 +65,7 @@ export const unvotePost = (id) =>
     .then(data => data)
 
 export const updatePost = post => {
+  console.log(post)
   const data = {
     ...post,
     timestamp: Date.now()
@@ -92,8 +87,8 @@ export const removePost = id =>
     .then(data => data)
 
 // Comments
-export const fetchComments = id => {
-  fetch(`${api}/posts/${id}/comments`, { headers })
+export const getComments = id => {
+  return fetch(`${api}/posts/${id}/comments`, { headers })
     .then(res => res.json())
     .then(data => data)
 }

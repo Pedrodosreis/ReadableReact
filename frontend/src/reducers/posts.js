@@ -8,13 +8,10 @@ export default function posts(state = {}, action) {
   switch (action.type) {
 
     case RECEIVE_POSTS:
-      console.log('multiple post')
       return action.posts
     case RECEIVE_POST:
-      console.log('single post')
       return action.post
     case ADD_POST:
-      console.log('add post')
       return action.post
     default:
       return state
