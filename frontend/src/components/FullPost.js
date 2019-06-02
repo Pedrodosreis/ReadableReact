@@ -4,6 +4,7 @@ import 'antd/dist/antd.css';
 import { Comment, Icon, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import { deletePost } from '../actions/posts';
+import { voteScore, unvoteScore } from '../actions/posts';
 
 class FullPost extends Component {
 
@@ -13,6 +14,14 @@ class FullPost extends Component {
 	delete = () => {
 		this.props.dispatch(deletePost(this.props.posts.id));
 	}
+
+	like = () => {
+		this.props.dispatch(voteScore(this.props.posts.id, null, false, false));
+	};
+
+	dislike = () => {
+		this.props.dispatch(unvoteScore(this.props.posts.id, null, false, false));
+	};
 
 	render() {
 
@@ -45,8 +54,8 @@ class FullPost extends Component {
 			<Icon type="delete" onClick={this.delete} />
 			</Tooltip> </span> </Link>,
 
-			<Link to={`/new/comment/${this.props.posts.id}`}>
-			<span style={{ paddingLeft: 10 }}>Novo Comentario</span>
+			<Link to={`/new/comment/${this.props.posts.id}/undefined`}>
+			<span style={{ paddingLeft: 10 }}>New Comment</span>
 			</Link>,
 		];
 

@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
-import NewPost from './container/NewPost.js';
-import MainPage from './container/MainPage.js';
-import PostPage from './container/PostPage.js';
+import NewPost from './NewPost.js';
+import MainPage from './MainPage.js';
+import PostPage from './PostPage.js';
+import NotFound from './NotFound.js';
+import CommentForm from './CommentForm'
 import { Switch, Route, withRouter } from 'react-router-dom';
-import CommentForm from './container/CommentForm'
+
 
 class App extends Component {
 
   componentDidMount() {
-
   }
 
   render() {
@@ -18,15 +19,16 @@ class App extends Component {
           <Switch>
             <Route path='/' exact component={MainPage} />
             <Route path='/new' exact component={NewPost} />
+            <Route path='/notfound' exact component={NotFound} />  
             <Route path='/new/:id' exact component={NewPost} />
             <Route path='/:category' exact component={MainPage} />
             <Route path='/:category/:id' exact component={PostPage} />
-            <Route path='/new/comment/:id' exact component={CommentForm} />            
+            <Route path='/new/comment/:postId/:commentId' exact component={CommentForm} />
+                     
           </Switch>
       </div>
     );
   }
-
 }
 
 export default withRouter(App);

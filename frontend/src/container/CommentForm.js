@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import 'antd/dist/antd.css';
 import { Button, Input } from 'antd';
-import { Menu, Icon } from 'antd';
 import { sendComment } from '../actions/comments';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header'
-
-const { SubMenu }  = Menu;
+import { getCommentById, editComment } from '../actions/comments';
+import { getPostById } from '../actions/posts';
 
 class CommentForm extends Component {
 
@@ -18,31 +16,29 @@ class CommentForm extends Component {
 	}
 
 	componentDidMount() {
+		if(this.props.match.params.commentId) {
+			this.props.dispatch(getCommentById(this.props.match.params.commentId));			
+		}
+		this.props.dispatch(getPostById(this.props.match.params.postId));
 	}
 
 	componentWillReceiveProps(nextProps) {
-		
+		this.editComment(nextProps.comments);
 	}
 
-	editPost = (post) => {
+	editComment = (comment) => {
 
 		this.setState(() => ({
-		  id: post.id,
-	      title: post.title,
-	      author: post.author,
-	      category: post.category,
-	      body: post.body,
+		  id: comment.id,
+	      author: comment.author,
+	      body: comment.body,
+	      parentId: comment.parentId,
+	      deleted: comment.deleted,
+	      parentDeleted: comment.parentDeleted,
+	      voteScore: comment.voteScore,
 	    }))
 
 	}
-
-	titleChange = (e) => {
-	    const title = e.target.value
-
-	    this.setState(() => ({
-	      title
-	    }))
-	  }
 
  	authorChange = (e) => {
 	    const author = e.target.value
@@ -69,26 +65,26 @@ class CommentForm extends Component {
 	}
 
 	handleSubmit = (e) => {
-	    e.preventDefault()
 
-	    const { id, title, author, body } = this.state;
-	    let parentId = this.props.match.params.id;
+	    const { id, author, body, parentId, deleted, parentDeleted, voteScore } = this.state;	    
 
-	    if(this.props.id) {
+	    if(id) {
 	    	let data = {
 	    		id,
-		    	title,
 		    	author,
 		    	body,
-		    	parentId
+		    	parentId, 
+		    	deleted, 
+		    	parentDeleted, 
+		    	voteScore,
 	    	}
-	    	// this.props.dispatch(editPost(data));
+	    	this.props.dispatch(editComment(data));
 	    } else {
 	    	let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+	    	let parentId = this.props.match.params.postId;
 
 		    let data = {
 		    	id,
-		    	title,
 		    	author,
 		    	body,
 		    	parentId
@@ -101,7 +97,6 @@ class CommentForm extends Component {
 	  cleanState = () => {
 	  	this.setState(() => ({
 	  	  id: '',
-	      title: '',
 	      author: '',
 	      body: '',
 	    }))
@@ -113,22 +108,13 @@ class CommentForm extends Component {
 
 	render() {
 
-		console.log('uuuuuuuuuuuuuuuuuuuuuuuu')
-		console.log(this.props);
-		console.log(this.state);
-
-		const { title, author, body } = this.state;
+		const { author, body } = this.state;
 
 		return (
 			<div>
 				<Header />
 				<div style={{ paddingLeft: 40, cursor: 'auto', width: 400 }}>
-				<form> 
-
-					<span>
-					<label> Titulo </label>
-					<Input placeholder="Titulo" value={title} onChange={this.titleChange}/>
-					</span>
+				<form>
 
 					<span>
 					<label> Author </label>
@@ -139,7 +125,7 @@ class CommentForm extends Component {
 					<label> Corpo</label>
 					<textarea style={{ width: 400, height:100}} placeholder="Mensagem" value={body} onChange={this.bodyChange}/>					
 
-					<Link to={`/`}>
+					<Link to={`/${this.props.posts.category}/${this.props.match.params.postId}`}>
 					<Button onClick={this.handleSubmit}>Submit</Button>
 					</Link>
 				</form>
@@ -149,4 +135,11 @@ class CommentForm extends Component {
 	}
 }
 
-export default connect()(CommentForm);
+function mapStateToProps ({ comments, posts }) {
+	return {
+		comments: comments,
+		posts: posts
+	}
+}
+
+export default connect(mapStateToProps)(CommentForm);

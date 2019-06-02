@@ -69,8 +69,6 @@ class Form extends Component {
 	}
 
 	handleSubmit = (e) => {
-	    e.preventDefault()
-
 	    const { id, title, author, body, category } = this.state;
 
 	    if(this.state.id) {

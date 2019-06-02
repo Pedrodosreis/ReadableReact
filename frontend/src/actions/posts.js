@@ -34,7 +34,7 @@ export const getAllPosts = (category, sort = false) => {
       .then(posts => {
         if(sort) {
            posts = posts.sort(function (a,b) {
-           return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
+           return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0 ;
           })
         }
         dispatch(receivePosts(posts))
@@ -52,15 +52,14 @@ export const getPostById = (id) => {
   }
 }
 
-export const voteScore = (id, category, sort) => {
+export const voteScore = (id, category, sort, allPosts) => {
   return dispatch => {
-    console.log(id)
     return votePost(id)
-      .then(post => getPosts(category)
+      .then(post => (allPosts ? getPosts(category) : getPost(id))
         .then(posts => {
           if(sort) {
           posts = posts.sort(function (a,b) {
-           return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
+           return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0 ;
           })
           }
 
@@ -69,15 +68,14 @@ export const voteScore = (id, category, sort) => {
   }
 }
 
-export const unvoteScore = (id, category, sort) => {
+export const unvoteScore = (id, category, sort, allPosts) => {
   return dispatch => {
-    console.log(id)
     return unvotePost(id)
-      .then(post => getPosts(category)
+      .then(post => (allPosts ? getPosts(category) : getPost(id))
         .then(posts => {
           if(sort) {
           posts = posts.sort(function (a,b) {
-           return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
+           return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0 ;
           })
           }
 
@@ -93,7 +91,7 @@ export const sortByVote = (category, sort) => {
       .then(posts => {
         if(sort) {
            posts = posts.sort(function (a,b) {
-           return a.voteScore < b.voteScore ? -1 : a.voteScore > b.voteScore ? 1 : 0 ;
+           return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0 ;
           })
         }
         dispatch(receivePosts(posts))
@@ -114,9 +112,9 @@ export const sendPost = (data) => async (dispatch) => {
   }
 }
 
-export const deletePost = (id) => async (dispatch) => {
+export const deletePost = (id) => (dispatch) => {
   try {
-    await removePost(id)
+    removePost(id)
     dispatch({
       type: REMOVE_POST,
       id
@@ -127,16 +125,10 @@ export const deletePost = (id) => async (dispatch) => {
   }
 }
 
-export const editPost = (data) => async (dispatch) => {
-  console.log(data)
-  try {
-    await updatePost(data)
+export const editPost = (data) => (dispatch) => {
+    updatePost(data)
     dispatch({
       type: EDIT_POST,
       post: data
     });
-  }
-  catch(err) {
-    console.error("Error editing post", err)
-  }
 }
