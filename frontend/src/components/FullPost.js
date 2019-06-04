@@ -12,11 +12,11 @@ class FullPost extends Component {
 	}
 
 	delete = () => {
-		this.props.dispatch(deletePost(this.props.posts.id));
+		this.props.dispatch(deletePost(this.props.posts));
 	}
 
 	like = () => {
-		this.props.dispatch(voteScore(this.props.posts.id, null, false, false));
+		this.props.dispatch(voteScore(this.props.posts));
 	};
 
 	dislike = () => {

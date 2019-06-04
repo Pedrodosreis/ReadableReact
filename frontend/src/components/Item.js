@@ -10,13 +10,13 @@ class Item extends Component {
 	like = () => {
 		let sort =  this.props.sort === 'Not sort' ? false : true;
 
-		this.props.dispatch(voteScore(this.props.post.id, this.props.category, sort, true));
+		this.props.dispatch(voteScore(this.props.post));
 	};
 
 	dislike = () => {
 		let sort =  this.props.sort === 'Not sort' ? false : true;
 
-		this.props.dispatch(unvoteScore(this.props.post.id, this.props.category, sort, true));
+		this.props.dispatch(unvoteScore(this.props.post.id, this.props.category, true));
 	};
 
 	render() {

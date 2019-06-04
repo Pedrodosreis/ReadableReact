@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
-import { getAllPosts } from '../actions/posts';
+import { getAllPosts, sortByDate } from '../actions/posts';
 import Item from './Item.js';
 import { Menu, Icon } from 'antd';
 
@@ -14,7 +14,7 @@ class Coment extends Component {
 	}
 
 	componentDidMount() {
-		this.props.dispatch(getAllPosts(this.props.category, false));		
+		this.props.dispatch(getAllPosts(this.props.category, false));	
 	}
 
 	isArray =  (value) => {
@@ -29,7 +29,7 @@ class Coment extends Component {
 	    }))
 
 		const isSort =  sort === 'Not sort' ? false : true;
-	    this.props.dispatch(getAllPosts(this.props.category, isSort));	
+	    this.props.dispatch(sortByDate(isSort));	
 	}
 
 	render() {
