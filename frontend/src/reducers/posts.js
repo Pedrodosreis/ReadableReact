@@ -7,6 +7,34 @@ export const REMOVE_POST = 'REMOVE_POST';
 export const SORT_BY_DATE = 'SORT_BY_DATE';
 export const EDIT_POST = 'EDIT_POST';
 
+  function isArray (value) {
+    return value && typeof value === 'object' && value.constructor === Array;
+  }
+
+function editPost(state, post) {
+  if(typeof state === 'object') {
+    return state
+  }
+
+  state.map(p => {
+    if(p.id === post.id) {
+      p.voteScore = post.voteScore;
+    }
+    return p;
+  })
+  return state;
+}
+
+function removePost(state, post) {
+  if(typeof state === 'object') {
+    return state
+  }
+  
+  return state.filter(p => {
+    return p.id !== post.id
+  })
+}
+
 export default function posts(state = {}, action) {
   switch (action.type) {
     case RECEIVE_POSTS:
@@ -14,26 +42,10 @@ export default function posts(state = {}, action) {
     case RECEIVE_POST:
       return action.post
     case EDIT_POST:
-      let post = {
-        author: action.post.author,
-        body: action.post.body,
-        category: action.post.category,
-        commentCount: action.post.commentCount,
-        deleted: action.post.deleted,
-        id: action.post.id,
-        timestamp: action.post,
-        title: action.post.title,
-        voteScore: action.post.voteScore + 1,
-      }
-
-      let newState  = 
-            {
-              ...state,
-              ...post
-            }
+      let newState = editPost(state, action.post)
       return newState
     case ADD_POST:
-        post = {
+        let post = {
           [action.post.id]: {
           author: action.post.author,
           body: action.post.body,
@@ -51,9 +63,9 @@ export default function posts(state = {}, action) {
         ...post
       }
       case REMOVE_POST:
-        return state
+        let removeState = removePost(state, action.post)
+        return removeState
       case SORT_BY_DATE:
-        console.log(action)
         if(action.sort) {
            state = state.sort(function (a,b) {
            return a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0 ;
@@ -63,7 +75,6 @@ export default function posts(state = {}, action) {
            return a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0 ;
            })
         }
-        console.log(state)
         return state
     default:
       return state

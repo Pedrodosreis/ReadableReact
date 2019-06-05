@@ -10,16 +10,30 @@ import { getPostById } from '../actions/posts';
 class CommentForm extends Component {
 
 	state = {
-		title: '',
+		id: 0,
 		author: '',
 		body: '',
+		parentId: '',
 	}
 
 	componentDidMount() {
-		if(this.props.match.params.commentId) {
-			this.props.dispatch(getCommentById(this.props.match.params.commentId));			
+		let comment = this.props.comments.filter(c => {
+			return c.id === this.props.match.params.commentId
+		})
+		if(comment.length === 1) {
+			this.setState( {
+				id: comment[0].id, 
+				author: comment[0].author, 
+				body: comment[0].body,
+			})
 		}
-		this.props.dispatch(getPostById(this.props.match.params.postId));
+
+		let post = this.props.posts.filter(p => {
+			return p.id === this.props.match.params.postId
+		})
+		this.setState({
+			parentId: post[0].id,
+		})
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -81,7 +95,6 @@ class CommentForm extends Component {
 	    	this.props.dispatch(editComment(data));
 	    } else {
 	    	let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-	    	let parentId = this.props.match.params.postId;
 
 		    let data = {
 		    	id,
@@ -89,6 +102,7 @@ class CommentForm extends Component {
 		    	body,
 		    	parentId
 	    	}
+	    	console.log(data)
 	    	this.props.dispatch(sendComment(data));
 	    }	    
 	    this.cleanState();	    
@@ -115,12 +129,8 @@ class CommentForm extends Component {
 				<Header />
 				<div style={{ paddingLeft: 40, cursor: 'auto', width: 400 }}>
 				<form>
-
-					<span>
 					<label> Author </label>
-					<Input placeholder="Autor" value={author} onChange={this.authorChange}/>
-					</span>
-					
+					<Input placeholder="Author" value={author} onChange={this.authorChange}/>					
 
 					<label> Corpo</label>
 					<textarea style={{ width: 400, height:100}} placeholder="Mensagem" value={body} onChange={this.bodyChange}/>					

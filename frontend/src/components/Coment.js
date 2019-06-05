@@ -34,10 +34,11 @@ class Coment extends Component {
 
 	render() {
 
+
 		let posts = [];
 		if(this.isArray(this.props.posts)) {
 			posts = this.props.posts.map((post, key) => {
-				return <Item key={key} post={post} category={this.props.category} sort={this.state.sort}/>
+				return <Item key={key} postId={post.id} category={this.props.category}/>
 			})
 		}
 
@@ -48,7 +49,7 @@ class Coment extends Component {
 				<SubMenu title={ <span className="submenu-title-wrapper">
 					<Icon type="appstore" />{this.state.sort}</span> }>
 					<Menu.Item key='Not sort' onClick={this.sortChange}>Not sort</Menu.Item>
-					<Menu.Item key='Sort by likes' onClick={this.sortChange}>Sort by likes</Menu.Item>
+					<Menu.Item key='Sort by Data' onClick={this.sortChange}>Sort by Data</Menu.Item>
 				</SubMenu>
 			</Menu>
 

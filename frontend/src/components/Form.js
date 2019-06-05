@@ -17,9 +17,6 @@ class Form extends Component {
 		category: 'Categoria',
 	}
 
-	componentDidMount() {
-	}
-
 	componentWillReceiveProps(nextProps) {
 		this.editPost(nextProps.posts);
 	}

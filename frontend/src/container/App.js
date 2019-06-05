@@ -9,9 +9,6 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 
 class App extends Component {
 
-  componentDidMount() {
-  }
-
   render() {
 
     return (

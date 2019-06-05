@@ -69,19 +69,18 @@ export const getPostById = (id) => {
 }
 
 export const voteScore = (post) => {
+  post.voteScore = post.voteScore + 1;
   return dispatch => {
-    return votePost(post.id)
+    votePost(post.id)
       .then(dispatch(editPostInPosts(post)))      
   }
 }
 
-export const unvoteScore = (id, category, allPosts) => {
+export const unvoteScore = (post) => {
+  post.voteScore = post.voteScore - 1;
   return dispatch => {
-    return unvotePost(id)
-      .then(post => (allPosts ? getPosts(category) : getPost(id))
-        .then(posts => {
-          dispatch(receivePosts(posts))
-        }))
+    unvotePost(post.id)
+      .then(dispatch(editPostInPosts(post)))        
   }
 }
 

@@ -7,27 +7,37 @@ import { Link } from 'react-router-dom';
 
 class Item extends Component {
 
-	like = () => {
-		let sort =  this.props.sort === 'Not sort' ? false : true;
+	state = {
+		onChange: false,
+	}
 
-		this.props.dispatch(voteScore(this.props.post));
+	like = (localPost) => {
+		this.props.dispatch(voteScore(localPost));
+		this.setState({ onChange: !this.state.onChange })
 	};
 
-	dislike = () => {
-		let sort =  this.props.sort === 'Not sort' ? false : true;
-
-		this.props.dispatch(unvoteScore(this.props.post.id, this.props.category, true));
+	dislike = (localPost) => {
+		this.props.dispatch(unvoteScore(localPost));
+		this.setState({ onChange: !this.state.onChange })
 	};
 
 	render() {
 
+		let localPost;
+		this.props.posts.map(p => {
+			if(p.id === this.props.postId) {
+				localPost = p;
+			}
+			return p;
+		})
+
 		const actions = [
 			<span>
 			<Tooltip title="Like">
-			<span style={{ paddingRight: 8, cursor: 'auto' }}>{this.props.post.voteScore}</span>
+			<span style={{ paddingRight: 8, cursor: 'auto' }}>{localPost.voteScore}</span>
 			<Icon
 			type="like"
-			onClick={this.like}
+			onClick={() => this.like(localPost)}
 			/>
 			</Tooltip>
 			
@@ -36,12 +46,12 @@ class Item extends Component {
 	        <Tooltip title="Dislike">
 	          <Icon
 	            type="dislike"
-	            onClick={this.dislike}
+	            onClick={() => this.dislike(localPost)}
 	          />
 	        </Tooltip>
 	      </span>,
 
-			<span >{this.props.post.commentCount + ' Comentario(s)'} </span>,			
+			<span >{localPost.commentCount + ' Comentario(s)'} </span>,			
 		];
 
 		return (
@@ -49,17 +59,17 @@ class Item extends Component {
 		<div>
 		<Comment
 		actions={actions}
-		author={this.props.post.author}
+		author={localPost.author}
 		content={
-			<Link to={`/${this.props.post.category}/${this.props.post.id}`}>
+			<Link to={`/${localPost.category}/${localPost.id}`}>
 			<div>
-			<h5>Category - {this.props.post.category}</h5>
-			<h4>{this.props.post.title}</h4>			
+			<h5>Category - {localPost.category}</h5>
+			<h4>{localPost.title}</h4>			
 			</div>
 			</Link>
 		}
 		datetime={
-			<span>{(new Date(this.props.post.timestamp)).toDateString()}</span>
+			<span>{(new Date(localPost.timestamp)).toDateString()}</span>
 		}
 		/>
 		</div>
@@ -67,4 +77,10 @@ class Item extends Component {
 	}
 }
 
-export default connect()(Item);
+function mapStateToProps ({ posts }) {
+	return {
+		posts: posts
+	}
+}
+
+export default connect(mapStateToProps)(Item);

@@ -4,7 +4,6 @@ import 'antd/dist/antd.css';
 import Header from '../components/Header.js';
 import FullPost from '../components/FullPost.js';
 import AllComments from '../components/AllComments.js';
-import { getPostById } from '../actions/posts';
 import { getCommentsByPostId } from '../actions/comments';
 import { Redirect } from 'react-router-dom';
 
@@ -12,7 +11,6 @@ import { Redirect } from 'react-router-dom';
 class PostPage extends Component {
 
 	componentDidMount() {
-		this.props.dispatch(getPostById(this.props.match.params.id));
 		this.props.dispatch(getCommentsByPostId(this.props.match.params.id));
 	}
 
@@ -24,9 +22,21 @@ class PostPage extends Component {
 		return <Redirect to="/notfound" />;
 	}
 
+	isEmpty = (obj) => {
+	    for(var key in obj) {
+	        if(obj.hasOwnProperty(key))
+	            return false;
+	    }
+	    return true;
+	}
+
 	render() {
 
 		if(this.props.posts.error === 'There was an error.') {
+			return this.errorPage();
+		}
+
+		if(this.isEmpty(this.props.posts)) {
 			return this.errorPage();
 		}
 
@@ -38,11 +48,24 @@ class PostPage extends Component {
 			})
 		}
 
+		let localPost;
+		if(this.isArray(this.props.posts)) {
+			this.props.posts.map(p => {
+			if(p.id === this.props.match.params.id) {
+				localPost = p;
+			}
+			return p;
+		})
+		} else {
+			localPost = this.props.posts;
+		}
+		
+
 		return (
 
 		<div>
 			<Header />
-			<FullPost posts={this.props.posts} />			
+			<FullPost post={localPost} />		
 			{comments}
 		</div>
 		);
@@ -50,7 +73,6 @@ class PostPage extends Component {
 }
 
 function mapStateToProps ({ posts, comments }) {
-
 	return {
 		posts: posts,
 		comments: comments

@@ -6,16 +6,15 @@ import { Link } from 'react-router-dom';
 import { deleteComment } from '../actions/comments';
 import { increaseCommentScore, decreaseCommentScore } from '../actions/comments'
 
+
 class AllComments extends Component {
 
-	componentDidMount() {
-	}
-
-	componentWillReceiveProps(nextProps) {
+	state = {
+		onChange: false,
 	}
 
 	like = () => {		
-		this.props.dispatch(increaseCommentScore(this.props.comment.id));
+		this.props.dispatch(increaseCommentScore(this.props.comment.id));		
 	}
 
 	dislike = () => {
@@ -24,6 +23,7 @@ class AllComments extends Component {
 
 	delete = () => {
 		this.props.dispatch(deleteComment(this.props.comment.id));
+		this.setState( {onChange : !this.state.onChange} )
 	}
 
 	render() {
@@ -52,10 +52,9 @@ class AllComments extends Component {
 		<span style={{ paddingLeft: 10 }}>Editar</span>
 		</Link>,
 
-		<Link to={`/${this.props.category}/${this.props.comment.parentId}`}> 
-		<span style={{ paddingLeft: 8, cursor: 'auto' }}> <Tooltip title="Like">
+		<span style={{ paddingLeft: 8, cursor: 'auto' }}> <Tooltip title="Delete">
 		<Icon type="delete" onClick={this.delete} />
-		</Tooltip> </span> </Link>,
+		</Tooltip> </span>,
 		];
 
 		return (			
@@ -76,4 +75,10 @@ class AllComments extends Component {
 	}
 }
 
-export default connect()(AllComments);
+function mapStateToProps ({ comments }) {
+	return {
+		comments: comments
+	}
+}
+
+export default connect(mapStateToProps)(AllComments);

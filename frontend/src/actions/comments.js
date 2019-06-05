@@ -88,6 +88,7 @@ export const deleteComment = (id) => (dispatch) => {
     removeComment(id)
     dispatch({
       type: REMOVE_COMMENT,
+      id
     });
 }
 
